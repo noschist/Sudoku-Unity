@@ -8,30 +8,45 @@ using UnityEngine.Networking;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private int width = 9, height = 9, difficulty;
-    [SerializeField] private Node nodePrefab;
+    //[SerializeField] private Node nodePrefab;
+    [SerializeField] private List<BoardManager> boardArray = new List<BoardManager>();
     [SerializeField] private SpriteRenderer boardPrefab;
     [SerializeField] private Block blockPrefab;
+    [SerializeField] private float gap; 
 
-    private List<Node> nodes;
+    //private List<Node> nodes;
+
+    //private BoardManager activeBoard = new BoardManager();
+
+    //todo: if no gap, change node and block scale to 1
 
     private void Start()
     {
+        getActiveBoard();
         GenerateGrid();
+    }
+
+    private void getActiveBoard()
+    {
+        foreach (BoardManager boardArr in boardArray)
+        {
+            if (boardArr.isActive)
+            {
+                //activeBoard = boardArr;
+                boardArray[0] = boardArr;
+                boardArr.isActive = false;
+                return;
+            }
+        }
     }
 
     private void GenerateGrid()
     {
-        nodes = new List<Node>();
-
-        for(int i = 0; i < width; i++)
-        {
-            for(int j = 0; j < height; j++)
-            {
-                var node = Instantiate(nodePrefab, new Vector2(i, j), Quaternion.identity);
-                nodes.Add(node);
-            }
-        }
-
+        //nodes = new List<Node>();
+   
+        var node = Instantiate(boardArray[0].boardLayout, new Vector2(0, 0), Quaternion.identity);
+        //nodes.Add(node);
+             
         var center = new Vector2((float)width / 2 - 0.5f, (float)height / 2 - 0.5f);
 
         var board = Instantiate(boardPrefab, center, Quaternion.identity);
@@ -78,7 +93,7 @@ public class GameManager : MonoBehaviour
             {
                 if (sudo.Response.UnsolvedSudoku[i][j] != 0)
                 {
-                    var block = Instantiate(blockPrefab, new Vector2(i, j), Quaternion.identity);
+                    var block =  Instantiate(blockPrefab, new Vector2(i, j), Quaternion.identity);
                     block.Init(sudo.Response.UnsolvedSudoku[i][j], false);
                 }
             }
