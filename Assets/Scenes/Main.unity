@@ -154,8 +154,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 9
   height: 9
+  difficulty: 1
   nodePrefab: {fileID: 3102037886485347147, guid: 103f5b18ee7848f42ba00a0f9ccf6b83, type: 3}
-  boardPrefab: {fileID: 7883481382668967287, guid: c018df1b391d33344a88967f8df96865, type: 3}
+  boardPrefab: {fileID: 8515056314365197315, guid: 9427174f85255ad4ab248d5da29b2ee5, type: 3}
+  blockPrefab: {fileID: 2107286054899288294, guid: adaad3a414b58944ab06a9c52efd1101, type: 3}
 --- !u!4 &1757701483
 Transform:
   m_ObjectHideFlags: 0
@@ -207,7 +209,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.09863386, g: 0.09349413, b: 0.103773594, a: 1}
+  m_BackGroundColor: {r: 0.20392159, g: 0.20000002, b: 0.20392159, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

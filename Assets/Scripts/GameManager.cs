@@ -1,33 +1,34 @@
 using Newtonsoft.Json;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private int width = 9, height = 9;
+    [SerializeField] private int width = 9, height = 9, difficulty;
     [SerializeField] private Node nodePrefab;
     [SerializeField] private SpriteRenderer boardPrefab;
+    [SerializeField] private Block blockPrefab;
 
+    private List<Node> nodes;
 
     private void Start()
     {
         GenerateGrid();
-        GetSudoku();
     }
 
     private void GenerateGrid()
     {
+        nodes = new List<Node>();
+
         for(int i = 0; i < width; i++)
         {
             for(int j = 0; j < height; j++)
             {
                 var node = Instantiate(nodePrefab, new Vector2(i, j), Quaternion.identity);
+                nodes.Add(node);
             }
         }
 
@@ -37,13 +38,15 @@ public class GameManager : MonoBehaviour
         board.size = new Vector2(width, height);
 
         Camera.main.transform.position = new Vector3(center.x, center.y, -10);
+
+        GetSudoku(difficulty);
     }
 
-    void GetSudoku() => StartCoroutine(GetSudokuData());
 
-    IEnumerator GetSudokuData()
+
+    private IEnumerator CallSudokuAPI(int diff)
     {
-        string reqUri = "https://sudoku-board.p.rapidapi.com/new-board?diff=2&stype=list&solu=true";
+        string reqUri = $"https://sudoku-board.p.rapidapi.com/new-board?diff={diff}&stype=list&solu=true";
         using (UnityWebRequest request = UnityWebRequest.Get(reqUri))
         {
             request.SetRequestHeader("X-RapidAPI-Key", "16e7fadf2amshc827494108f8b58p17c6a5jsnb37b5267332c");
@@ -52,36 +55,33 @@ public class GameManager : MonoBehaviour
             if (request.result == UnityWebRequest.Result.ConnectionError)
                 Debug.Log(request.error);
             else
-                CreateFromJSON(request.downloadHandler.text);
+                CrackJSON(request.downloadHandler.text);
         }
     }
 
-    private void SpawnBlocks(Response sudo)
+    public void GetSudoku(int diff)
     {
-        Debug.Log(sudo.response.unsolved_sudoku);
-        
+        StartCoroutine(CallSudokuAPI(diff));
     }
 
-    private void CreateFromJSON(string jsonString)
+    private void CrackJSON(string jsonString)
     {
-        var values = JsonConvert.DeserializeObject<Response>(jsonString);
-        SpawnBlocks(values);
+        SpawnBlocks(JsonConvert.DeserializeObject<Root>(jsonString));
     }
-}
 
-public struct BlockType
-{
-    public int val;
-    public bool isPlayer;
-}
-
-public struct Response
-{
-    public SudokuBoard response;
-    public struct SudokuBoard
+    
+    private void SpawnBlocks(Root sudo)
     {
-        public string difficulty;
-        public int[][] solution;
-        [JsonProperty(PropertyName = "unsolved-sudoku")] public int[][] unsolved_sudoku;
-    }
+        for(int i = 0; i < width; i++)
+        {
+            for(int j = 0; j < height; j++)
+            {
+                if (sudo.Response.UnsolvedSudoku[i][j] != 0)
+                {
+                    var block = Instantiate(blockPrefab, new Vector2(i, j), Quaternion.identity);
+                    block.Init(sudo.Response.UnsolvedSudoku[i][j], false);
+                }
+            }
+        }    
+    }    
 }

@@ -5,11 +5,18 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public int Value;
     [SerializeField] private TextMeshPro textMesh;
 
-    public void Init(BlockType type)
+    public void Init(int val, bool isPlayer)
     {
-
+        textMesh.text = val.ToString();
+        if(isPlayer)
+        {
+            textMesh.color = Color.white;
+        }
+        else
+        {
+            textMesh.color = new Color32(170, 107, 103, 255);
+        }
     }
 }
