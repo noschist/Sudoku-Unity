@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 
 public class GameManager : MonoBehaviour
 {
+    private GameObject boardParent;
     private readonly int width = 9;
     private readonly int height = 9;
     [SerializeField] private List<BoardManager> boardArray = new();
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        boardParent = GameObject.Find("BoardParent");
         GetActiveBoard();
         GenerateGrid();
         GetSudoku();
@@ -37,9 +39,11 @@ public class GameManager : MonoBehaviour
         var center = new Vector2((float)width / 2 - 0.5f, (float)height / 2 - 0.5f);
 
         var node = Instantiate(boardArray[0].boardLayout, new Vector2(3.81f, 3.961f), Quaternion.identity);
+        node.transform.parent = boardParent.transform;
         node.name = "BoardLayouts";
 
         var board = Instantiate(boardArray[0].boardPrefab, center, Quaternion.identity);
+        board.transform.parent = boardParent.transform;
         board.name = "MainBoard";
         board.size = new Vector2(width, height);
 
@@ -85,6 +89,7 @@ public class GameManager : MonoBehaviour
                 if (sudo.Response.UnsolvedSudoku[width - i -1][j] != 0)
                 {
                     var block =  Instantiate(blockPrefab, new Vector2(j, i), Quaternion.identity);
+                    block.transform.parent = boardParent.transform;
                     block.name = $"Block {sudo.Response.UnsolvedSudoku[width - i - 1][j]}";
                     //block.transform.parent = boardArray[0].boardLayout.transform;
                     block.Init(sudo.Response.UnsolvedSudoku[width - i - 1][j], false);
