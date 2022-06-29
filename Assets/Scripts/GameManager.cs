@@ -8,17 +8,8 @@ using UnityEngine.Networking;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private int width = 9, height = 9, difficulty;
-    //[SerializeField] private Node nodePrefab;
     [SerializeField] private List<BoardManager> boardArray = new List<BoardManager>();
-    [SerializeField] private SpriteRenderer boardPrefab;
     [SerializeField] private Block blockPrefab;
-    [SerializeField] private float gap; 
-
-    //private List<Node> nodes;
-
-    //private BoardManager activeBoard = new BoardManager();
-
-    //todo: if no gap, change node and block scale to 1
 
     private void Start()
     {
@@ -32,7 +23,6 @@ public class GameManager : MonoBehaviour
         {
             if (boardArr.isActive)
             {
-                //activeBoard = boardArr;
                 boardArray[0] = boardArr;
                 boardArr.isActive = false;
                 return;
@@ -42,18 +32,11 @@ public class GameManager : MonoBehaviour
 
     private void GenerateGrid()
     {
-        //nodes = new List<Node>();
-   
-        var node = Instantiate(boardArray[0].boardLayout, new Vector2(0, 0), Quaternion.identity);
-        //nodes.Add(node);
-             
         var center = new Vector2((float)width / 2 - 0.5f, (float)height / 2 - 0.5f);
-
-        var board = Instantiate(boardPrefab, center, Quaternion.identity);
+        var node = Instantiate(boardArray[0].boardLayout, new Vector2(3.81f, 3.961f), Quaternion.identity);
+        var board = Instantiate(boardArray[0].boardPrefab, center, Quaternion.identity);
         board.size = new Vector2(width, height);
-
         Camera.main.transform.position = new Vector3(center.x, center.y, -10);
-
         GetSudoku(difficulty);
     }
 
@@ -70,7 +53,9 @@ public class GameManager : MonoBehaviour
             if (request.result == UnityWebRequest.Result.ConnectionError)
                 Debug.Log(request.error);
             else
+            {
                 CrackJSON(request.downloadHandler.text);
+            }
         }
     }
 
@@ -87,14 +72,15 @@ public class GameManager : MonoBehaviour
     
     private void SpawnBlocks(Root sudo)
     {
-        for(int i = 0; i < width; i++)
+        for(int i = width - 1; i >= 0; i--)
         {
-            for(int j = 0; j < height; j++)
+            for(int j = 0; j < height ; j++)
             {
-                if (sudo.Response.UnsolvedSudoku[i][j] != 0)
+                if (sudo.Response.UnsolvedSudoku[width - i -1][j] != 0)
                 {
-                    var block =  Instantiate(blockPrefab, new Vector2(i, j), Quaternion.identity);
-                    block.Init(sudo.Response.UnsolvedSudoku[i][j], false);
+                    var block =  Instantiate(blockPrefab, new Vector2(j, i), Quaternion.identity);
+                    block.transform.parent = GameObject.Find("node-gaps(Clone)").transform;
+                    block.Init(sudo.Response.UnsolvedSudoku[width - i - 1][j], false);
                 }
             }
         }    

@@ -156,8 +156,8 @@ MonoBehaviour:
   height: 9
   difficulty: 1
   boardArray:
-  - isGap: 1
-    isDark: 1
+  - isGap: 0
+    isDark: 0
     boardPrefab: {fileID: 0}
     boardFont: {fileID: 0}
     systemColor:
@@ -175,16 +175,14 @@ MonoBehaviour:
     boardFont: {fileID: 11400000, guid: 9dbf84fe9f826f84fa5869786cfc6bda, type: 2}
     systemColor:
       serializedVersion: 2
-      rgba: 4278191248
+      rgba: 4278190280
     userColor:
       serializedVersion: 2
       rgba: 4294967295
     cameraColor: {r: 0.20392157, g: 0.2, b: 0.20392157, a: 1}
     isActive: 1
-    boardLayout: {fileID: 7057145561538506875, guid: c7d676fb9cf68924992138e1f93e5180, type: 3}
-  boardPrefab: {fileID: 5637619805579395653, guid: 70084de04894f904eac13002e65038ed, type: 3}
+    boardLayout: {fileID: 1099977381639625726, guid: e887d4175c06fd944a356cac7e296118, type: 3}
   blockPrefab: {fileID: 2107286054899288294, guid: adaad3a414b58944ab06a9c52efd1101, type: 3}
-  gap: 0
 --- !u!4 &1757701483
 Transform:
   m_ObjectHideFlags: 0
